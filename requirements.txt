@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+langchain
+langgraph
+langchain-ollama
+langchain-community
+langchain-chroma
+chromadb
+pypdf
+python-docx
+python-multipart
+requests
+langchain-groq
+python-dotenv

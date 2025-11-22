@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirement Test Case Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=1">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Test Case Generator</h1>
+            <p>AI-Powered Requirement Analysis & Test Generation</p>
+        </header>
+
+        <main>
+            <div class="glass-panel input-section">
+                <div class="upload-area" id="drop-zone">
+                    <div class="icon">📂</div>
+                    <h3>Upload Requirement Document</h3>
+                    <p>Drag & drop PDF, DOCX, or TXT here</p>
+                    <input type="file" id="file-input" accept=".pdf,.docx,.txt" hidden>
+                    <button class="btn-secondary" onclick="document.getElementById('file-input').click()">Browse
+                        Files</button>
+                    <div id="file-info" class="file-info hidden"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="feature-name">Feature Name</label>
+                    <input type="text" id="feature-name"
+                        placeholder="e.g., User Login, Payment Gateway, or 'all features'">
+                    <p class="hint">💡 Tip: Enter "all features" to generate test cases for all features in the document
+                    </p>
+                </div>
+                <div class="input-group">
+                    <label for="test-case-limit">Test Case Limit (optional)</label>
+                    <input type="number" id="test-case-limit" placeholder="e.g., 10" min="1">
+                    <p class="hint">Set a maximum number of test cases to generate per feature.</p>
+                </div>
+
+                <button id="generate-btn" class="btn-primary" disabled>
+                    <span class="btn-text">Generate Test Cases</span>
+                    <span class="loader hidden"></span>
+                </button>
+                <div id="status-message" class="status-message hidden"></div>
+            </div>
+
+            <div id="results-section" class="glass-panel results-section hidden">
+                <div class="results-header">
+                    <h2>Generated Test Cases</h2>
+                    <div id="hallucination-badge" class="badge hidden">Hallucination Check Passed</div>
+                </div>
+                <div id="test-cases-container" class="test-cases-container">
+                    <!-- Test cases will be injected here -->
+                </div>
+
+                <div id="hallucination-report" class="hallucination-report hidden">
+                    <h3>⚠️ Potential Hallucinations Detected</h3>
+                    <ul id="hallucination-list"></ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js?v=11"></script>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+Feature: User Login
+The system shall allow users to log in with a username and password.
+1. The user enters a valid username and password.
+2. The system validates the credentials.
+3. If valid, the user is redirected to the dashboard.
+4. If invalid, an error message is displayed.
