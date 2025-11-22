@@ -24,6 +24,7 @@ class GenerateRequest(BaseModel):
     file_path: str
     feature_name: str
     test_case_limit: Optional[int] = None
+    url: Optional[str] = None
 
 @app.get("/")
 async def root():
@@ -77,7 +78,12 @@ async def generate_test_cases_stream(request: GenerateRequest):
     Uses Server-Sent Events (SSE) to send test cases as they're generated.
     """
     return StreamingResponse(
-        stream_test_case_generation(request.file_path, request.feature_name, request.test_case_limit),
+        stream_test_case_generation(
+            request.file_path, 
+            request.feature_name, 
+            request.test_case_limit,
+            request.url
+        ),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

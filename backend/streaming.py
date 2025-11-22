@@ -13,7 +13,7 @@ from backend.nodes.retrieval import retrieve_chunks
 from backend.nodes.generation import generate_test_cases
 from backend.nodes.validation import check_hallucinations
 
-async def stream_test_case_generation(file_path: str, feature_name: str, test_case_limit: int = None) -> AsyncGenerator[str, None]:
+async def stream_test_case_generation(file_path: str, feature_name: str, test_case_limit: int = None, url: str = None) -> AsyncGenerator[str, None]:
     """
     Stream test case generation using Server-Sent Events.
     Yields events as test cases are generated in real-time.
@@ -22,6 +22,7 @@ async def stream_test_case_generation(file_path: str, feature_name: str, test_ca
         file_path: Path to uploaded requirements file
         feature_name: Feature name to generate test cases for
         test_case_limit: Optional limit on number of test cases
+        url: Optional URL to fetch requirements from
         
     Yields:
         SSE formatted strings with event data
@@ -36,6 +37,7 @@ async def stream_test_case_generation(file_path: str, feature_name: str, test_ca
             "file_path": file_path,
             "feature_name": feature_name,
             "test_case_limit": test_case_limit,
+            "url": url,
             "documents": [],
             "chunks": [],
         }
