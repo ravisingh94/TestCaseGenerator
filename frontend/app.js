@@ -8,8 +8,11 @@ const testCasesContainer = document.getElementById('test-cases-container');
 const hallucinationReport = document.getElementById('hallucination-report');
 const hallucinationList = document.getElementById('hallucination-list');
 const hallucinationBadge = document.getElementById('hallucination-badge');
+const exportBtn = document.getElementById('export-btn');
+const exportMenu = document.getElementById('export-menu');
 
 let uploadedFilePath = null;
+window.generatedTestCases = []; // Store test cases for export (globally accessible)
 
 // Drag & Drop Events
 dropZone.addEventListener('dragover', (e) => {
@@ -60,37 +63,87 @@ function handleFile(file) {
         });
 }
 
+const urlInput = document.getElementById('url-input');
+
+urlInput.addEventListener('input', () => {
+    if (urlInput.value.trim() !== '') {
+        // Disable file input if URL is entered
+        dropZone.classList.add('disabled');
+        document.getElementById('file-input').disabled = true;
+        uploadedFilePath = null;
+        fileInfo.textContent = '';
+        fileInfo.classList.add('hidden');
+    } else {
+        dropZone.classList.remove('disabled');
+        document.getElementById('file-input').disabled = false;
+    }
+    checkEnableGenerate();
+});
+
+// Add event listener for feature name input
 featureNameInput.addEventListener('input', checkEnableGenerate);
 
 function checkEnableGenerate() {
-    console.log('Checking enable:', {
-        uploadedFilePath: uploadedFilePath,
-        featureName: featureNameInput.value.trim(),
-        shouldEnable: uploadedFilePath && featureNameInput.value.trim() !== ''
-    });
+    const hasFile = uploadedFilePath !== null;
+    const hasUrl = urlInput.value.trim() !== '';
+    const hasFeature = featureNameInput.value.trim() !== '';
 
-    if (uploadedFilePath && featureNameInput.value.trim() !== '') {
+    if ((hasFile || hasUrl) && hasFeature) {
         generateBtn.disabled = false;
-        console.log('Button ENABLED');
     } else {
         generateBtn.disabled = true;
-        console.log('Button DISABLED');
     }
 }
+
+let abortController = null;
+const stopBtn = document.getElementById('stop-btn');
+
+stopBtn.addEventListener('click', () => {
+    if (abortController) {
+        abortController.abort();
+        abortController = null;
+
+        // Update UI immediately
+        stopBtn.classList.add('hidden');
+        generateBtn.disabled = false;
+        generateBtn.querySelector('.btn-text').textContent = 'Generate Test Cases';
+        generateBtn.querySelector('.loader').classList.add('hidden');
+
+        const statusMsg = document.getElementById('status-message');
+        if (statusMsg) {
+            statusMsg.textContent = 'Generation Stopped 🛑';
+            setTimeout(() => {
+                statusMsg.classList.add('hidden');
+                statusMsg.textContent = '';
+            }, 3000);
+        }
+    }
+});
 
 generateBtn.addEventListener('click', () => {
     const featureName = featureNameInput.value.trim();
     const testCaseLimit = document.getElementById('test-case-limit').value;
+    const url = urlInput.value.trim();
 
-    if (!uploadedFilePath || !featureName) return;
+    if ((!uploadedFilePath && !url) || !featureName) return;
 
     // UI Loading State
     generateBtn.disabled = true;
     generateBtn.querySelector('.btn-text').textContent = 'Generating...';
     generateBtn.querySelector('.loader').classList.remove('hidden');
+    stopBtn.classList.remove('hidden'); // Show stop button
     resultsSection.classList.remove('hidden');
     testCasesContainer.innerHTML = '';
     hallucinationReport.classList.add('hidden');
+
+    // Reset test cases array for new generation
+    window.generatedTestCases = [];
+    if (exportBtn) {
+        exportBtn.classList.add('export-disabled');
+    }
+
+    // Initialize AbortController
+    abortController = new AbortController();
 
     // Use fetch with ReadableStream for streaming
     fetch('http://127.0.0.1:8000/generate-stream', {
@@ -100,10 +153,12 @@ generateBtn.addEventListener('click', () => {
             'Accept': 'text/event-stream'
         },
         body: JSON.stringify({
-            file_path: uploadedFilePath,
+            file_path: uploadedFilePath || "",
             feature_name: featureName,
-            test_case_limit: testCaseLimit ? parseInt(testCaseLimit) : null
-        })
+            test_case_limit: testCaseLimit ? parseInt(testCaseLimit) : null,
+            url: url || null
+        }),
+        signal: abortController.signal
     })
         .then(response => {
             const reader = response.body.getReader();
@@ -117,6 +172,7 @@ generateBtn.addEventListener('click', () => {
                         generateBtn.disabled = false;
                         generateBtn.querySelector('.btn-text').textContent = 'Generate Test Cases';
                         generateBtn.querySelector('.loader').classList.add('hidden');
+                        stopBtn.classList.add('hidden'); // Hide stop button
                         return;
                     }
 
@@ -132,17 +188,33 @@ generateBtn.addEventListener('click', () => {
                     });
 
                     processStream();
+                }).catch(error => {
+                    if (error.name === 'AbortError') {
+                        console.log('Fetch aborted');
+                    } else {
+                        console.error('Stream error:', error);
+                        displayError('An error occurred during generation.', 'stream_error');
+                        generateBtn.disabled = false;
+                        generateBtn.querySelector('.btn-text').textContent = 'Generate Test Cases';
+                        generateBtn.querySelector('.loader').classList.add('hidden');
+                        stopBtn.classList.add('hidden');
+                    }
                 });
             }
 
             processStream();
         })
         .catch(error => {
-            console.error('Error:', error);
-            displayError('Generation failed. Please check the console for details.', 'network_error');
-            generateBtn.disabled = false;
-            generateBtn.querySelector('.btn-text').textContent = 'Generate Test Cases';
-            generateBtn.querySelector('.loader').classList.add('hidden');
+            if (error.name === 'AbortError') {
+                console.log('Fetch aborted');
+            } else {
+                console.error('Fetch error:', error);
+                displayError('Failed to connect to server.', 'connection_error');
+                generateBtn.disabled = false;
+                generateBtn.querySelector('.btn-text').textContent = 'Generate Test Cases';
+                generateBtn.querySelector('.loader').classList.add('hidden');
+                stopBtn.classList.add('hidden');
+            }
         });
 });
 
@@ -155,6 +227,16 @@ function displayResults(data) {
     const hallucinationInfo = data.hallucination_report || {};
     const isBatchMode = data.batch_mode || false;
     const featuresProcessed = data.features_processed || [];
+
+    // Store test cases for export
+    window.generatedTestCases = testCases;
+
+    // Enable export button if we have test cases
+    if (testCases.length > 0) {
+        exportBtn.classList.remove('export-disabled');
+    } else {
+        exportBtn.classList.add('export-disabled');
+    }
 
     // Display batch mode summary if applicable
     if (isBatchMode && featuresProcessed.length > 0) {
@@ -379,6 +461,17 @@ function handleStreamEvent(event) {
                 featureGroup.appendChild(card);
             } else {
                 testCasesContainer.appendChild(card);
+            }
+
+            // Store test case for export
+            if (!window.generatedTestCases) {
+                window.generatedTestCases = [];
+            }
+            window.generatedTestCases.push(tc);
+
+            // Enable export button
+            if (exportBtn) {
+                exportBtn.classList.remove('export-disabled');
             }
             break;
 

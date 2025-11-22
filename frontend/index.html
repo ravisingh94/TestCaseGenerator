@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=1">
+
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.min.js"></script>
 </head>
 
 <body>
@@ -34,6 +38,13 @@
                     <button class="btn-secondary" onclick="document.getElementById('file-input').click()">Browse
                         Files</button>
                     <div id="file-info" class="file-info hidden"></div>
+
+                    <div class="divider"><span>OR</span></div>
+
+                    <div class="input-group url-input-group">
+                        <input type="url" id="url-input"
+                            placeholder="Enter requirement URL (e.g., https://example.com/specs)">
+                    </div>
                 </div>
 
                 <div class="input-group">
@@ -49,17 +60,35 @@
                     <p class="hint">Set a maximum number of test cases to generate per feature.</p>
                 </div>
 
-                <button id="generate-btn" class="btn-primary" disabled>
-                    <span class="btn-text">Generate Test Cases</span>
-                    <span class="loader hidden"></span>
-                </button>
+                <div class="button-group">
+                    <button id="generate-btn" class="btn-primary" disabled>
+                        <span class="btn-text">Generate Test Cases</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                    <button id="stop-btn" class="btn-danger hidden">
+                        <span class="btn-text">Stop</span>
+                    </button>
+                </div>
                 <div id="status-message" class="status-message hidden"></div>
             </div>
 
             <div id="results-section" class="glass-panel results-section hidden">
                 <div class="results-header">
                     <h2>Generated Test Cases</h2>
-                    <div id="hallucination-badge" class="badge hidden">Hallucination Check Passed</div>
+                    <div class="results-actions">
+                        <div class="export-dropdown">
+                            <button id="export-btn" class="btn-secondary export-disabled">
+                                💾 Save
+                            </button>
+                            <div id="export-menu" class="export-menu hidden">
+                                <button class="export-option" data-format="txt">📄 Text (.txt)</button>
+                                <button class="export-option" data-format="json">📋 JSON (.json)</button>
+                                <button class="export-option" data-format="docx">📝 Word (.docx)</button>
+                                <button class="export-option" data-format="pdf">📕 PDF (.pdf)</button>
+                            </div>
+                        </div>
+                        <div id="hallucination-badge" class="badge hidden">Hallucination Check Passed</div>
+                    </div>
                 </div>
                 <div id="test-cases-container" class="test-cases-container">
                     <!-- Test cases will be injected here -->
@@ -73,7 +102,8 @@
         </main>
     </div>
 
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=16"></script>
+    <script src="export.js"></script>
 </body>
 
 </html>
