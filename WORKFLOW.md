@@ -8,23 +8,23 @@ graph TD
     Start((Start))
     End((End))
     
-    Loader[File Loader<br/>(Load PDF/DOCX/TXT)]
-    Splitter[Text Splitter<br/>(Chunking)]
-    VectorStore[Vector Store<br/>(Embed & Store)]
+    Loader["File Loader<br/>(Load PDF/DOCX/TXT)"]
+    Splitter["Text Splitter<br/>(Chunking)"]
+    VectorStore["Vector Store<br/>(Embed & Store)"]
     
     %% Conditional Logic
     CheckMode{Feature Mode?}
     
     %% Single Feature Path
-    Query[Feature Query<br/>(Retrieve Context)]
-    Gen[Generation Node<br/>(LLM)]
-    Hallucination[Hallucination Checker<br/>(Validation)]
+    Query["Feature Query<br/>(Retrieve Context)"]
+    Gen["Generation Node<br/>(LLM)"]
+    Hallucination["Hallucination Checker<br/>(Validation)"]
     
     %% All Features Path (Batch)
-    Extractor[Feature Extractor<br/>(Identify Features)]
-    BatchProc[Batch Processor<br/>(Loop Features)]
+    Extractor["Feature Extractor<br/>(Identify Features)"]
+    BatchProc["Batch Processor<br/>(Loop Features)"]
     
-    Formatter[Formatter Node<br/>(Final Output)]
+    Formatter["Formatter Node<br/>(Final Output)"]
 
     %% Edges
     Start --> Loader
