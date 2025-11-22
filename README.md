@@ -2,7 +2,6 @@
 
 An intelligent, agentic AI-powered tool that automatically generates comprehensive test cases from requirement documents (PDF, DOCX, TXT). It uses RAG (Retrieval-Augmented Generation) to ensure accuracy and includes a built-in hallucination check.
 
-
 ## 🚀 Key Features
 
 ### 1. **Intelligent Test Case Generation**

@@ -1,13 +1,13 @@
-console.log('🔧 export.js file is loading...');
+// console.log('🔧 export.js file is loading...');
 
 // Export functionality - runs immediately since script is loaded at end of body
 (function () {
     const exportBtn = document.getElementById('export-btn');
     const exportMenu = document.getElementById('export-menu');
 
-    console.log('Export script loaded', { exportBtn, exportMenu });
-    console.log('Export button disabled?', exportBtn.disabled);
-    console.log('Export button classes:', exportBtn.className);
+    // console.log('Export script loaded', { exportBtn, exportMenu });
+    // console.log('Export button disabled?', exportBtn.disabled);
+    // console.log('Export button classes:', exportBtn.className);
 
     if (!exportBtn || !exportMenu) {
         console.error('Export button or menu not found');
@@ -17,7 +17,7 @@ console.log('🔧 export.js file is loading...');
     // Try multiple ways to attach the event
     // Method 1: addEventListener
     exportBtn.addEventListener('click', (e) => {
-        console.log('Export button clicked (addEventListener)');
+        // console.log('Export button clicked (addEventListener)');
         e.preventDefault();
         e.stopPropagation();
         exportMenu.classList.toggle('hidden');
@@ -27,11 +27,11 @@ console.log('🔧 export.js file is loading...');
     exportBtn.onclick = function (e) {
         // Don't do anything if button is disabled
         if (exportBtn.classList.contains('export-disabled')) {
-            console.log('Export button is disabled, ignoring click');
+            // console.log('Export button is disabled, ignoring click');
             return;
         }
 
-        console.log('Export button clicked (onclick)');
+        // console.log('Export button clicked (onclick)');
         e.preventDefault();
         e.stopPropagation();
         exportMenu.classList.toggle('hidden');
@@ -47,13 +47,13 @@ console.log('🔧 export.js file is loading...');
     // Export option handlers
     document.querySelectorAll('.export-option').forEach(option => {
         option.addEventListener('click', () => {
-            console.log('Export option clicked:', option.dataset.format);
+            // console.log('Export option clicked:', option.dataset.format);
             const format = option.dataset.format;
             exportMenu.classList.add('hidden');
 
             // Access generatedTestCases from window scope
             const testCases = window.generatedTestCases || [];
-            console.log('Test cases to export:', testCases.length);
+            // console.log('Test cases to export:', testCases.length);
 
             switch (format) {
                 case 'txt':
