@@ -2,7 +2,6 @@
 
 An intelligent, agentic AI-powered tool that automatically generates comprehensive test cases from requirement documents (PDF, DOCX, TXT). It uses RAG (Retrieval-Augmented Generation) to ensure accuracy and includes a built-in hallucination check.
 
-![Application Screenshot](https://via.placeholder.com/800x400?text=Requirement+Test+Case+Generator+UI)
 
 ## 🚀 Key Features
 
@@ -29,6 +28,19 @@ An intelligent, agentic AI-powered tool that automatically generates comprehensi
 ### 5. **Customizable Generation**
 - **Feature Targeting**: Generate test cases for a specific feature (e.g., "Login Page") or the entire document.
 - **Test Case Limit**: Set a maximum number of test cases to generate per feature to save time or tokens.
+- **URL Support**: Paste a URL to fetch requirements directly from web pages instead of uploading files.
+
+### 6. **Process Control**
+- **Abort Generation**: Stop the generation process at any time with the "Stop" button.
+- **Real-time Cancellation**: Immediately cancel ongoing requests without waiting for completion.
+
+### 7. **Export Capabilities**
+- **Multiple Formats**: Export generated test cases in 4 different formats:
+  - 📄 **Text (.txt)** - Plain text format for easy sharing
+  - 📋 **JSON (.json)** - Structured data for programmatic use
+  - 📝 **Word (.docx)** - Professional Word documents
+  - 📕 **PDF (.pdf)** - Print-ready PDF files
+- **One-Click Export**: Simple dropdown menu to choose your preferred format.
 
 ## 🛠️ Tech Stack
 
@@ -66,6 +78,8 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+**Note**: The `requirements.txt` includes `beautifulsoup4` for URL content extraction.
+
 ### 3. Environment Configuration
 Create a `.env` file in the root directory if you plan to use Groq or other providers:
 ```env
@@ -86,19 +100,21 @@ The backend will start at `http://127.0.0.1:8000`.
 You can use any simple HTTP server. For Python:
 ```bash
 cd frontend
-python -m http.server 3000
-```
 Access the app at `http://localhost:3000`.
 
 ## 📖 Usage Guide
 
-1.  **Upload Document**: Drag and drop your requirement file (PDF, DOCX, TXT).
+1.  **Provide Requirements**:
+    *   **Upload**: Drag and drop your requirement file (PDF, DOCX, TXT), OR
+    *   **URL**: Paste a URL to fetch requirements from a web page
 2.  **Select Feature**:
     *   Enter a specific feature name (e.g., "Search Functionality").
     *   OR enter **"all features"** to generate test cases for the entire document.
 3.  **Set Limit (Optional)**: Enter a number to limit how many test cases are generated (e.g., "5").
 4.  **Generate**: Click "Generate Test Cases".
 5.  **Review**: Watch test cases appear in real-time. Check for any "Potential Hallucination" warnings.
+6.  **Export**: Click the "💾 Save" button and choose your preferred format (TXT, JSON, DOCX, or PDF).
+7.  **Stop (if needed)**: Click the "Stop" button to cancel generation at any time.
 
 ## 🔧 Troubleshooting
 
